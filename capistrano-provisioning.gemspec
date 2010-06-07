@@ -24,10 +24,17 @@ Gem::Specification.new do |s|
      "VERSION",
      "capistrano-provisioning.gemspec",
      "lib/capistrano-provisioning.rb",
+     "lib/capistrano-provisioning/cluster.rb",
+     "lib/capistrano-provisioning/namespaces.rb",
      "lib/capistrano-provisioning/recipes.rb",
+     "lib/capistrano-provisioning/user.rb",
+     "pkg/capistrano-provisioning-0.0.0.gem",
+     "spec/cluster_spec.rb",
+     "spec/namespaces_spec.rb",
      "spec/recipes_spec.rb",
      "spec/spec.opts",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "spec/user_spec.rb"
   ]
   s.homepage = %q{http://github.com/samdanavia/capistrano-provisioning}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -35,8 +42,11 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Capistrano provisioning}
   s.test_files = [
-    "spec/recipes_spec.rb",
-     "spec/spec_helper.rb"
+    "spec/cluster_spec.rb",
+     "spec/namespaces_spec.rb",
+     "spec/recipes_spec.rb",
+     "spec/spec_helper.rb",
+     "spec/user_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
