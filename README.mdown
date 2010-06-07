@@ -2,6 +2,10 @@
 
 Capistrano Provisioning is an extension to Capistrano that allows you to define clusters of servers and run provisioning tasks on them, such as installing users. It is a replacement for the fabric gem (http://rubygems.org/gems/fabric).
 
+## A word of caution
+
+This software is in alpha - we're releasing early so we can start using this gem in anger.
+
 ## Installation
 
 ### With bundler
