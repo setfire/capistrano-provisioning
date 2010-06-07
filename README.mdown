@@ -34,7 +34,13 @@ The simplest usage of this would be something like:
 
     cluster :web, 'web1.example.com'
     
-This would add a cap task called 'web'; calling this will mean any task specified later in the chain will run on the 'web' cluster. Eg:
+In fact, this is shorthand for the following:
+
+    cluster :web do
+      servers 'web1.example.com'
+    end
+    
+Both of these would add a cap task called 'web'; calling this will mean any task specified later in the chain will run on the 'web' cluster. Eg:
 
     cap web invoke COMMAND='uptime'
     
@@ -128,7 +134,7 @@ Which would mean that running:
 
     cap system1:web install_users
 
-... would add Bob, Joe and Rupert to the web cluster, with the appropriate groups
+... would add Bob, Joe and Rupert to the web cluster, with the appropriate groups.
 
 ## Note on Patches/Pull Requests
  
