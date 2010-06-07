@@ -140,6 +140,13 @@ Which would mean that running:
 
 ... would add Bob, Joe and Rupert to the web cluster, with the appropriate groups.
 
+## Features we guess we're probably going to need
+
+* Command a task across all clusters within a namespace
+* Ability to output business-friendly documentation of how the clusters are set up (and what user access exists)
+* A way to remove user accounts that don't belong
+* More flexibility about how users are inherited between nested namespaces
+
 ## Note on Patches/Pull Requests
  
 * Fork the project.
