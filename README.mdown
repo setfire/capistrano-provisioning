@@ -1,0 +1,145 @@
+# Capistrano Provisioning
+
+Capistrano Provisioning is an extension to Capistrano that allows you to define clusters of servers and run provisioning tasks on them, such as installing users. It is a replacement for the fabric gem (http://rubygems.org/gems/fabric).
+
+## Installation
+
+### With bundler
+
+Add the following to your Gemfile:
+
+    gem 'capistrano-provisioning'
+
+If your bundler environment isn't initialised yet, you'll need to add something like this to your deploy.rb/Capfile:
+
+    require 'rubygems'
+    require 'bundler'
+
+    Bundler.setup
+    require 'capistrano-provisioning/recipes'   
+
+### Without bundler
+
+    gem install capistrano-provisioning
+    
+Either within your Capfile, or your deploy.rb, add:
+
+    require 'capistrano-provisioning/recipes'
+
+## Usage
+
+Once you have required the gem, the `cluster` command is available to you within capistrano recipes.
+
+The simplest usage of this would be something like:
+
+    cluster :web, 'web1.example.com'
+    
+This would add a cap task called 'web'; calling this will mean any task specified later in the chain will run on the 'web' cluster. Eg:
+
+    cap web invoke COMMAND='uptime'
+    
+Which will run the 'uptime' command on 'web1.example.com'.
+
+You can specify multiple remote hosts like so:
+
+    cluster :web, 'web1.example.com', 'web2.example.com'
+
+So... this far it's quite similar to cap's own 'role' syntax. After this, however, life gets interesting...
+
+### Installing users
+
+Specify the users that belong on a cluster as so:
+
+    cluster :web do
+      servers 'web1.example.com'
+      users 'bob', 'joe'
+    end
+    
+And put these users' public ssh keys in config/keys directory as so `config/keys/bob.pub` and `config/keys/joe.pub`
+    
+Running:
+
+    cap web install_users
+    
+... will now create these users on the servers if they don't exist, and add the keys to their authorized_keys file.
+
+You can specify groups as so:
+
+    cluster :web do
+      servers 'web1.example.com'
+      users 'bob', 'joe', :groups => ['some_group']
+      users 'rupert'
+    end
+    
+This will add Bob and Joe to some_group (:groups is an array, so add as many as you like), but won't add Rupert.
+
+### Bootstrapping
+
+To specify a block of code that is to be run to 'bootstrap' a server, do this:
+
+    cluster :web do
+      servers 'web1.example.com'
+      bootstrap do
+        run 'some_command'
+      end
+    end
+
+Run the following:
+
+    cap web run_bootstrap
+    
+And `some_command` will be run on the servers.
+
+### Namespaces and default users
+
+Namespaces work as you would expect:
+
+    namespace :system1 do
+      cluster :web do
+        # ...
+      end
+      
+      cluster :db do
+        # ...
+      end
+    end
+
+This block will create the following tasks:
+
+    cap system1:web
+    cap system1:db
+
+It is also possible to define a default group of users for a namespace:
+
+
+    namespace :system1 do
+      default_users 'bob', 'joe', :groups => ['some_group']
+      default_users 'rupert'
+      cluster :web do
+        # ...
+      end
+  
+      cluster :db do
+        # ...
+      end
+    end
+
+Which would mean that running:
+
+    cap system1:web install_users
+
+... would add Bob, Joe and Rupert to the web cluster, with the appropriate groups
+
+## Note on Patches/Pull Requests
+ 
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Commit, do not mess with rakefile, version, or history.
+  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
+
+## Copyright
+
+Copyright (c) 2010 Sam Phillips. See LICENSE for details.
