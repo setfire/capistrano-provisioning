@@ -22,7 +22,7 @@ module Capistrano
       alias :server :servers
     
       def default_users(*args)
-        return @users if args.empty?
+        return @users || [] if args.empty?
 
         users, options = parse_collection_and_options_args(args)
 
@@ -33,12 +33,14 @@ module Capistrano
       end
       alias :default_user :default_users
 
-      def inherit_default_users(options)
+      def inherit_default_users(options = {})
         @users ||= []
+        
+        parent_users = Marshal.load(Marshal.dump(self.parent.default_users)) # Need a deep copy, so clone or dup won't cut it
                 
         if options[:additional_groups]
-          parent_users = self.parent.default_users.collect do |user|
-            user.groups += options[:groups]
+          parent_users.collect! do |user|
+            user.groups += options[:additional_groups]
             user
           end
         end

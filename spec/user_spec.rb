@@ -28,7 +28,7 @@ describe CapistranoProvisioning::User do
     
     user.send(:create_account_on_server)
   end
-
+  
   it "should load the user's ssh key"
   
   it "should check if a user's account exists"
@@ -37,5 +37,13 @@ describe CapistranoProvisioning::User do
   
   it "should update the user's key on the server"
 
-  it "should add a user to any groups"
+  describe "and groups" do
+    it "should return an empty array if there are no groups" do
+      user.groups.should == []
+    end
+    
+    it "should add a user to any groups"    
+  end
+
+
 end

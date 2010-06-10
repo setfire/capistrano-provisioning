@@ -16,6 +16,54 @@ describe Capistrano::Configuration::Namespaces do
     config.default_users.length.should == 2
   end
   
+  it "should return an empty array if there are no default users" do
+    config.default_users.should == []
+  end
+
+  describe "default user inheritance" do
+    it "should inherit the users" do
+      config.default_users 'sam', 'chris'
+      config.namespace :nested do
+        inherit_default_users
+      end      
+    
+      config.namespaces[:nested].default_users.length.should == 2
+    end
+    
+    it "should inherit the users' groups" do
+      config.default_users 'sam', 'chris', :groups => 'test_group'
+      config.namespace :nested do
+        inherit_default_users
+      end
+
+      config.namespaces[:nested].default_users.each do |user|
+        user.groups.should include('test_group')
+      end
+    end
+
+    describe "additional groups" do
+      before(:each) do
+        config.default_users 'sam', 'chris', :groups => 'test_group'
+        config.namespace :nested do
+          inherit_default_users :additional_groups => 'test_group_2'
+        end        
+      end
+
+      it "should add any additional groups" do
+        config.namespaces[:nested].default_users.each do |user|
+          user.groups.should include('test_group')
+          user.groups.should include('test_group_2')
+        end
+      end
+
+      it "should not add additional groups to the original users" do
+        config.default_users.each do |user|
+          user.groups.should_not include('test_group_2')
+        end
+      end
+    end
+  end
+  
   context "within a cluster" do
     it "should take a list of users"
     
@@ -38,7 +86,7 @@ describe Capistrano::Configuration::Namespaces do
         
     it "should take a list of servers"
     
-    it "should take a bootstrap block"
+    it "should take a bootstrap block"    
   end
   
   context "argument parsing" do
