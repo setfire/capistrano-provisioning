@@ -42,7 +42,8 @@ module CapistranoProvisioning
       
       self.config.task(name.to_sym, :desc => "Set the current cluster to '#{name}'") do
         logger.info "Setting servers to #{cluster.servers.join(', ')}"
-        set(:cluster, cluster)
+        current_cluster = fetch(:clusters, [])
+        set(:clusters, current_cluster.push(cluster))
       end
     end
   end
