@@ -6,11 +6,7 @@ end
 
 describe Capistrano::Configuration::Namespaces do
   let(:config)    { CapConfig.new }
-  
-  it "should create a cluster"
-  
-  it "cluster should take a list of servers inline"  
-  
+    
   it "should take a list of default users" do
     config.default_users 'sam', 'chris'
     config.default_users.length.should == 2
@@ -79,7 +75,18 @@ describe Capistrano::Configuration::Namespaces do
       end
     end
   end
+
+  it "should create a cluster" do
+    config.cluster :test_cluster
+    config.clusters[:test_cluster].should be_a CapistranoProvisioning::Cluster
+  end
   
+  it "cluster should take a list of servers inline" do
+    config.cluster :test_cluster, 'server_1', 'server_2'
+    config.clusters[:test_cluster].servers.length.should == 2
+  end
+
+
   context "within a cluster" do
     it "should take a list of users"
     
@@ -93,14 +100,16 @@ describe Capistrano::Configuration::Namespaces do
         end
       }.to change(config.users, :length).by(0)
     end
-    
-    context "inheriting users" do
-      it "should inherit its parent's default users"
-    
-      it "should add its parent's users to any additional groups"
+            
+    it "should take a list of servers" do
+      pending()
+      
+      # Current errors
+      config.cluster :test_cluster do
+        servers 'server_1', 'server_2'
+      end
+      config.clusters[:test_cluster].servers.length.should == 2
     end
-        
-    it "should take a list of servers"
     
     it "should take a bootstrap block"    
   end
