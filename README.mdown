@@ -56,6 +56,16 @@ You can specify multiple remote hosts like so:
 
 So... this far it's quite similar to cap's own 'role' syntax. After this, however, life gets interesting...
 
+### Chaining
+
+If you want to run a task on multiple clusters, simply chain them as so:
+
+    cap web db invoke COMMAND='uptime'
+    
+... Assuming that you've defined a web and a db cluster!
+
+This will also work with namespaced clusters.
+
 ### Installing users
 
 Specify the users that belong on a cluster as so:
@@ -118,6 +128,12 @@ This block will create the following tasks:
 
     cap system1:web
     cap system1:db
+    
+As well as 
+
+    cap system1:all
+    
+Which will load all of the clusters defined in `system1`.
 
 It is also possible to define a default group of users for a namespace:
 
