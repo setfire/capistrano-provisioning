@@ -5,7 +5,7 @@ module CapistranoProvisioning
     def initialize(opts = {})
       self.name = opts[:name]
       self.config = opts[:config]
-      self.groups = opts[:groups] || []
+      self.groups = opts[:groups].to_a || []
     end
         
     def install(opts = {})    

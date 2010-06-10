@@ -42,7 +42,16 @@ describe CapistranoProvisioning::User do
       user.groups.should == []
     end
     
-    it "should add a user to any groups"    
+    it "should add a user to one group" do
+      user = CapistranoProvisioning::User.new(:name => username, :server => server, :config => config, :groups => 'test_group')
+      user.groups.should include("test_group")
+    end
+    
+    it "should add a user to an array of groups" do
+      user = CapistranoProvisioning::User.new(:name => username, :server => server, :config => config, :groups => ['test_group', 'test_group_2'])
+      user.groups.should include("test_group")
+      user.groups.should include("test_group_2")
+    end
   end
 
 

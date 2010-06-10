@@ -35,6 +35,7 @@ module Capistrano
 
       def inherit_default_users(options = {})
         @users ||= []
+        options[:additional_groups] = options[:additional_groups].to_a
         
         parent_users = Marshal.load(Marshal.dump(self.parent.default_users)) # Need a deep copy, so clone or dup won't cut it
                 

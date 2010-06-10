@@ -140,12 +140,31 @@ Which would mean that running:
 
 ... would add Bob, Joe and Rupert to the web cluster, with the appropriate groups.
 
+#### Inheriting default users
+
+By default, namespaces do _not_ inherit default users from the namespace above. If you want this inheritance, it's easy:
+
+    namespace :nested_namespace do
+      inherit_default_users
+    end
+
+If you want those users to have an additional group within this namespace only, use the following:
+
+    namespace :nested_namespace do
+      inherit_default_users :additional_groups => 'additional_group'
+    end
+    
+You can also pass an array of additional groups:
+
+    namespace :nested_namespace do
+      inherit_default_users :additional_groups => ['additional_group_1', 'additional_group_2']
+    end
+
 ## Features we guess we're probably going to need
 
 * Command to run a task across all clusters within a namespace
 * Ability to output business-friendly documentation of how the clusters are set up (and what user access exists)
 * A way to remove user accounts that don't belong
-* More flexibility about how users are inherited between nested namespaces
 
 ## Note on Patches/Pull Requests
  

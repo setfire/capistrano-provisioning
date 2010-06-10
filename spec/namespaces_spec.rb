@@ -44,12 +44,24 @@ describe Capistrano::Configuration::Namespaces do
     describe "additional groups" do
       before(:each) do
         config.default_users 'sam', 'chris', :groups => 'test_group'
+      end
+      
+      it "should add one additional groups from a string" do
         config.namespace :nested do
           inherit_default_users :additional_groups => 'test_group_2'
         end        
+
+        config.namespaces[:nested].default_users.each do |user|
+          user.groups.should include('test_group')
+          user.groups.should include('test_group_2')
+        end        
       end
 
-      it "should add any additional groups" do
+      it "should add any additional groups from an array" do
+        config.namespace :nested do
+          inherit_default_users :additional_groups => ['test_group_2']
+        end        
+
         config.namespaces[:nested].default_users.each do |user|
           user.groups.should include('test_group')
           user.groups.should include('test_group_2')
@@ -57,6 +69,10 @@ describe Capistrano::Configuration::Namespaces do
       end
 
       it "should not add additional groups to the original users" do
+        config.namespace :nested do
+          inherit_default_users :additional_groups => ['test_group_2']
+        end        
+
         config.default_users.each do |user|
           user.groups.should_not include('test_group_2')
         end
