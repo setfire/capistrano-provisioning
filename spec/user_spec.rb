@@ -5,8 +5,6 @@ class CapConfig
 end
 
 describe CapistranoProvisioning::User do
-  it "should have a user in a group"
-
   let(:username)  { 'z6MeKbLOXPqi5P' }
   let(:server)    { 'test1.example.com' }
   let(:config)    { mock(CapConfig) }
@@ -53,6 +51,4 @@ describe CapistranoProvisioning::User do
       user.groups.should include("test_group_2")
     end
   end
-
-
 end
