@@ -178,7 +178,6 @@ You can also pass an array of additional groups:
 
 ## Features we guess we're probably going to need
 
-* Command to run a task across all clusters within a namespace
 * Ability to output business-friendly documentation of how the clusters are set up (and what user access exists)
 * A way to remove user accounts that don't belong
 
