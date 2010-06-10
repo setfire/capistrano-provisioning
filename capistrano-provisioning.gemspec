@@ -9,17 +9,17 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sam Phillips"]
-  s.date = %q{2010-06-07}
+  s.date = %q{2010-06-10}
   s.description = %q{Capistrano provisioning}
   s.email = %q{sam@samdanavia.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+     "README.mdown"
   ]
   s.files = [
     ".document",
      "LICENSE",
-     "README.rdoc",
+     "README.mdown",
      "Rakefile",
      "VERSION",
      "capistrano-provisioning.gemspec",
