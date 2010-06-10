@@ -10,6 +10,7 @@ begin
     gem.email = "sam@samdanavia.com"
     gem.homepage = "http://github.com/samdanavia/capistrano-provisioning"
     gem.authors = ["Sam Phillips"]
+    gem.add_dependency "capistrano", ">= 2.5.18"
     gem.add_development_dependency "rspec", ">= 1.2.9"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
