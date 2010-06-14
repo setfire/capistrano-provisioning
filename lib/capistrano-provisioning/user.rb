@@ -16,16 +16,16 @@ module CapistranoProvisioning
 
       self.key = File.read(local_key_file_path)
       
-      self.create_account_on_server unless self.account_exists?
-      self.create_ssh_config_directory
-      self.update_authorized_keys
-      self.add_account_to_groups
+      self.create_account_on_server(opts[:server]) unless self.account_exists?(opts[:server])
+      self.create_ssh_config_directory(opts[:server])
+      self.update_authorized_keys(opts[:server])
+      self.add_account_to_groups(opts[:server])
     end
     
     protected
-    def account_exists?
+    def account_exists?(server)
       begin
-        if capture("id #{self.name}")
+        if capture("id #{self.name}", :hosts => server)
           true
         else
           false
@@ -36,17 +36,17 @@ module CapistranoProvisioning
       end
     end
 
-    def create_account_on_server
-      run "#{sudo} /usr/sbin/useradd -m #{name}", :pty => true
+    def create_account_on_server(server)
+      run "#{sudo} /usr/sbin/useradd -m #{name}", :pty => true, :hosts => server
     end
     
-    def add_account_to_groups
+    def add_account_to_groups(server)
       self.groups.each do |group|
-        run "#{sudo} /usr/sbin/usermod -a -G#{group} #{self.name}", :pty => true
+        run "#{sudo} /usr/sbin/usermod -a -G#{group} #{self.name}", :pty => true, :hosts => server
       end
     end
     
-    def create_ssh_config_directory
+    def create_ssh_config_directory(server)
       # Actual dirt
       commands = <<-COMMANDS
         sudo su root -c 'if [ ! -d #{ssh_config_directory_path} ]; then
@@ -56,15 +56,15 @@ module CapistranoProvisioning
         #{sudo} chmod 700 #{ssh_config_directory_path}
       COMMANDS
       
-      run commands, :pty => true
+      run commands, :pty => true, :hosts => server
     end
     
-    def update_authorized_keys
+    def update_authorized_keys(server)
       commands = <<-COMMANDS
         #{sudo} touch #{authorized_keys_file_path} &&
         echo '#{key}' | sudo tee #{authorized_keys_file_path}
       COMMANDS
-      run commands, :pty => true
+      run commands, :pty => true, :hosts => server
     end
     
     def authorized_keys_file_path
