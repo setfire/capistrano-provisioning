@@ -26,7 +26,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   
   desc "Installs the specified users on the cluster"
   task :install_users do
-    @cluster.each do |cluster|
+    @clusters.each do |cluster|
       cluster.install_users
     end
   end
