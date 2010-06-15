@@ -26,20 +26,30 @@ module CapistranoProvisioning
     def default_users(*args)
       return @users || [] if args.empty?
 
-      users, options = parse_collection_and_options_args(args)
-
-      @users ||= []
-      @users += users.collect do |user|
+      name, users, options = parse_name_collection_and_options_args(args)
+      new_users = users.collect do |user|
         CapistranoProvisioning::User.new(options.merge!(:name => user, :config => self))            
       end
+      
+      if name
+        @user_groups ||= {}
+        @user_groups[name] = new_users
+      end
+
+      @users ||= []      
+      @users += new_users
     end
     alias :default_user :default_users
+    
+    def default_user_group(group)
+      @user_groups[group]
+    end
 
-    def inherit_default_users(options = {})
-      @users ||= []
+    def inherit_default_users(*args)
+      groups, options = parse_collection_and_options_args(args)
+      
       options[:additional_groups] = options[:additional_groups].to_a
-
-      parent_users = Marshal.load(Marshal.dump(self.parent.default_users)) # Need a deep copy, so clone or dup won't cut it
+      parent_users = clone_parent_users(groups)
         
       if options[:additional_groups]
         parent_users.collect! do |user|
@@ -48,6 +58,7 @@ module CapistranoProvisioning
         end
       end
 
+      @users ||= []
       @users += parent_users
     end
     alias :inherit_default_user :inherit_default_users
@@ -70,6 +81,24 @@ module CapistranoProvisioning
         logger.info "Setting clusters to #{self.clusters.keys.join(',')}"
         set(:clusters, self.clusters.values)
       end
+    end
+
+    def clone_parent_users(groups = [])
+      unless groups.empty?
+        users = groups.collect { |group| self.parent.default_user_group(group) }.flatten
+      else
+        users = self.parent.default_users
+      end
+
+      Marshal.load(Marshal.dump(users)) # Need a deep copy, so clone or dup won't cut it
+    end
+    
+    def parse_name_collection_and_options_args(args)
+      args = args.dup
+      
+      name = (args.first.is_a? Symbol) ? args.shift : nil
+      collection, options = parse_collection_and_options_args(args)
+      return name, collection, options
     end
 
     def parse_collection_and_options_args(args)
