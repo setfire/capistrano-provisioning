@@ -24,7 +24,7 @@ describe CapistranoProvisioning::User do
     config.should_receive(:run).with(/#{username}/, anything()).once
     config.should_receive(:sudo).with(no_args()).once
     
-    user.send(:create_account_on_server)
+    user.send(:create_account_on_server, server)
   end
   
   it "should load the user's ssh key"
