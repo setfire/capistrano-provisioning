@@ -22,6 +22,8 @@ describe CapistranoProvisioning::Cluster do
     cluster.users.length.should == 2    
   end
   
+  it "should have a unique name"
+  
   context "installing users" do
     it "should use the namespace's default users if no users are specified"
     

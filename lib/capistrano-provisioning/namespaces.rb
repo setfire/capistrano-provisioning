@@ -7,13 +7,15 @@ module CapistranoProvisioning
       # hence the untidy defaulting here.
       self.clusters ||= {}
       self.create_namespace_all_task
+      
+      cluster = CapistranoProvisioning::Cluster.new(name, :config => self)
 
-      self.clusters[name] = CapistranoProvisioning::Cluster.new(name, :config => self)
-      self.clusters[name].servers = servers
+      self.clusters[cluster.unique_name] = cluster
+      self.clusters[cluster.unique_name].servers = servers
 
       return unless block_given?
 
-      @current_cluster = @clusters[name]
+      @current_cluster = cluster
       yield block
       @current_cluster = nil
     end
@@ -73,24 +75,43 @@ module CapistranoProvisioning
       @current_cluster.bootstrap = block
     end
 
-    protected
+    def unique_name
+      if self.parent.respond_to?(:unique_name)
+        self.parent.unique_name + ":" + self.name.to_s
+      else
+        self.name.to_s
+      end
+    end
+
+    protected  
     def create_namespace_all_task
       return if self.tasks.keys.include?(:all)
 
       task(:all, :desc => "Set the current clusters '#{name}'") do
-        logger.info "Setting clusters to #{self.clusters.keys.join(',')}"
-        set(:clusters, self.clusters.values)
+        clusters = self.clusters
+        clusters.merge!(self.offspring_clusters)
+
+        logger.info "Setting clusters to #{clusters.keys.collect(&:to_s).sort.join(', ')}"
+        set(:clusters, clusters.values)
       end
     end
 
+    def offspring_clusters
+      clusters = self.clusters
+      
+      self.namespaces.each do |name, namespace|
+        clusters.merge!(namespace.offspring_clusters)
+      end
+      
+      clusters
+    end
+    
     def clone_parent_users(groups = [])
       unless groups.empty?
-        users = groups.collect { |group| self.parent.default_user_group(group) }.flatten
+        groups.collect { |group| self.parent.default_user_group(group).collect(&:dup) }.flatten
       else
-        users = self.parent.default_users
+        self.parent.default_users.collect(&:dup)
       end
-
-      Marshal.load(Marshal.dump(users)) # Need a deep copy, so clone or dup won't cut it
     end
     
     def parse_name_collection_and_options_args(args)

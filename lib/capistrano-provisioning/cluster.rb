@@ -35,6 +35,10 @@ module CapistranoProvisioning
       end
     end
     
+    def unique_name
+      self.config.send(:unique_name) + ":" + self.name.to_s
+    end
+
     protected
     
     def add_cluster_cap_task
