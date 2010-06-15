@@ -15,17 +15,33 @@ module CapistranoProvisioning
     end
     
     def install_users
-      if users.empty?
-        @users = config.default_users
-      end
-      
-      abort "No users found" unless self.users
-      
+      ensure_users      
+
       self.servers.each do |server|
         self.users.each do |user|
           user.install(:server => server)
         end
       end
+    end
+    
+    def preview_users
+      ensure_users
+
+      self.servers.each do |server|
+        puts "#{server}: "
+        self.users.each do |user|
+          groups = user.groups.empty? ? '' : "(#{user.groups.join(', ')})"
+          puts "\t#{user.name} #{groups}"
+        end
+      end
+    end
+    
+    def ensure_users
+      if users.empty?
+        @users = config.default_users
+      end
+      
+      abort "No users found" unless self.users
     end
         
     def add_users(users, opts = {})

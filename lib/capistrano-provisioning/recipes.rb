@@ -1,7 +1,7 @@
 require 'capistrano-provisioning'
 
 Capistrano::Configuration.instance(:must_exist).load do
-  on :before, "cluster_ensure", :only => ["run_bootstrap", "install_users"]
+  on :before, "cluster_ensure", :only => ["run_bootstrap", "install_users", "preview_users"]
   desc "[Internal] Ensures that a cluster has been specified"
   task :cluster_ensure do
     @clusters = fetch(:clusters, false)
@@ -28,6 +28,13 @@ Capistrano::Configuration.instance(:must_exist).load do
   task :install_users do
     @clusters.each do |cluster|
       cluster.install_users
+    end
+  end
+  
+  task :preview_users do
+    puts "The following users will be added: "
+    @clusters.each do |cluster|
+      cluster.preview_users
     end
   end
 end
