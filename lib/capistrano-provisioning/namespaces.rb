@@ -67,20 +67,19 @@ module CapistranoProvisioning
 
     def users(*args)
       users, options = parse_collection_and_options_args(args)
-      
-      users.each_with_index do |user, i|
+
+      users_to_add = users.collect do |user|
         if user.is_a? Symbol
-          group_users = @current_cluster.config.default_user_group(user)
-          if group_users
-            users.delete_at(i)
-            users += group_users
-          else
-            abort "Can't find user group for #{user} (in #{self.name})"
-          end
+          group_users = @current_cluster.config.default_user_group(user).flatten
+          abort "Can't find user group for #{user} (in #{self.name})" unless group_users
+          group_users
+        else
+          user
         end
       end
       
-      @current_cluster.add_users(users, options)
+      users_to_add.flatten!    
+      @current_cluster.add_users(users_to_add, options)
     end
     alias :user :users
 

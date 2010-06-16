@@ -136,10 +136,13 @@ describe Capistrano::Configuration do
       end
       
       users = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users
+      user_names = users.collect(&:name)
 
       ['joe', 'bob'].each do |user|
-        users.collect(&:name).should include(user)
+        user_names.should include(user)
       end
+      
+      user_names.should_not include(:chaps)
 
       users.each do |user|
         user.should be_a CapistranoProvisioning::User
@@ -165,11 +168,13 @@ describe Capistrano::Configuration do
         end
       end
       
-      users = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users
+      user_names = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users.collect(&:name)
 
       ['joe', 'bob', 'sam'].each do |user|
-        users.collect(&:name).should include(user)
+        user_names.should include(user)
       end
+      
+      user_names.should_not include(:chaps)
     end
     
     it "should not add users to the namespace" do
