@@ -1,7 +1,7 @@
 module CapistranoProvisioning
   class User
-    attr_accessor :name, :config, :key
-    attr_writer :groups
+    attr_accessor :name, :config
+    attr_writer :groups, :key
 
     def initialize(opts = {})
       self.name = opts[:name]
@@ -11,12 +11,10 @@ module CapistranoProvisioning
         
     def install(opts = {})    
       abort "Aborting - Cannot install user #{self.name} as no server specified" unless opts[:server]
-      abort "Aborting - Could not find key for #{self.name} at #{local_key_file_path}" unless File.exists?(local_key_file_path)
+      abort "Aborting - Could not find key for #{self.name} at #{local_key_file_path}" unless key
 
       logger.debug "installing #{self.name} on #{opts[:server]}"    
 
-      self.key = File.read(local_key_file_path)
-      
       self.create_account_on_server(opts[:server]) unless self.account_exists?(opts[:server])
       self.create_ssh_config_directory(opts[:server])
       self.update_authorized_keys(opts[:server])
@@ -39,6 +37,10 @@ module CapistranoProvisioning
         # Must figure out a better way to capture that the command has failed
         false
       end
+    end
+    
+    def key
+      File.read(local_key_file_path) if File.exists?(local_key_file_path) 
     end
 
     def create_account_on_server(server)

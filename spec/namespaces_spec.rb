@@ -121,10 +121,8 @@ describe Capistrano::Configuration do
       end
       
       users = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users
-
-      ['sam', 'chris'].each do |user|
-        users.collect(&:name).should include(user)
-      end
+      user_names = users.collect(&:name)
+      user_names.should include('sam','chris')
     end
     
     it "should inherit named users" do
@@ -136,17 +134,14 @@ describe Capistrano::Configuration do
       end
       
       users = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users
-      user_names = users.collect(&:name)
-
-      ['joe', 'bob'].each do |user|
-        user_names.should include(user)
-      end
-      
-      user_names.should_not include(:chaps)
-
       users.each do |user|
         user.should be_a CapistranoProvisioning::User
       end
+
+      user_names = users.collect(&:name)
+      user_names.should include('joe', 'bob')    
+      user_names.should_not include(:chaps)
+
     end
     
     it "should raise an error if passed named users that do not exist" do
@@ -169,36 +164,9 @@ describe Capistrano::Configuration do
       end
       
       user_names = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users.collect(&:name)
-
-      ['joe', 'bob', 'sam'].each do |user|
-        user_names.should include(user)
-      end
-      
+      user_names.should include('joe', 'bob', 'sam')
       user_names.should_not include(:chaps)
     end
-    
-    it "should not add users to the namespace" do
-      pending()
-
-      # Currently errors
-      expect {
-        config.cluster :test_cluster do
-          users 'sam', 'chris'
-        end
-      }.to change(config.users, :length).by(0)
-    end
-            
-    it "should take a list of servers" do
-      pending()
-      
-      # Current errors
-      config.cluster :test_cluster do
-        servers 'server_1', 'server_2'
-      end
-      config.clusters[:test_cluster].servers.length.should == 2
-    end
-    
-    it "should take a bootstrap block"    
   end
 
   describe "unique name" do

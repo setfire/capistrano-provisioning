@@ -1,7 +1,6 @@
 module CapistranoProvisioning
   class Cluster
     attr_accessor :name, :servers, :bootstrap, :config
-    attr_reader :users
 
     def initialize(name, opts = {})
       self.name = name    
@@ -37,11 +36,11 @@ module CapistranoProvisioning
     end
     
     def ensure_users
-      if users.empty?
+      if @users.empty? and config.respond_to?(:default_users)
         @users = config.default_users
       end
       
-      abort "No users found" unless self.users
+      abort "No users found" unless @users
     end
         
     def add_users(users, opts = {})
@@ -58,6 +57,11 @@ module CapistranoProvisioning
     
     def unique_name
       self.config.send(:unique_name) + ":" + self.name.to_s
+    end
+    
+    def users
+      ensure_users
+      @users
     end
 
     protected
