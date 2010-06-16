@@ -1,12 +1,9 @@
 require 'spec_helper'
 
-class CapConfig
-  include Capistrano::Configuration::Namespaces
-end
-
 describe CapistranoProvisioning::Cluster do
-  let(:config_mock)     { mock(CapConfig) }
-  let(:cluster)         { CapistranoProvisioning::Cluster.new(cluster_name, :servers => [], :config => CapConfig.new) }
+  let(:config_mock)     { mock(Capistrano::Configuration) }
+  let(:config)          { Capistrano::Configuration.new }
+  let(:cluster)         { CapistranoProvisioning::Cluster.new(cluster_name, :servers => [], :config => config) }
   let(:cluster_name)    { '16nHElbcaf' }
 
   it "should add a capistrano task" do

@@ -1,14 +1,10 @@
 require 'spec_helper'
 
-class CapConfig
-  include Capistrano::Configuration::Namespaces
-end
-
 describe CapistranoProvisioning::User do
-  let(:username)  { 'z6MeKbLOXPqi5P' }
-  let(:server)    { 'test1.example.com' }
-  let(:config)    { mock(CapConfig) }
-  let(:user)      { CapistranoProvisioning::User.new(:name => username, :server => server, :config => config) }
+  let(:username)      { 'z6MeKbLOXPqi5P' }
+  let(:server)        { 'test1.example.com' }
+  let(:config_mock)   { mock(Capistrano::Configuration) }
+  let(:user)          { CapistranoProvisioning::User.new(:name => username, :server => server, :config => config_mock) }
 
   describe "install" do
     it "should require a server" do
@@ -21,8 +17,8 @@ describe CapistranoProvisioning::User do
   end
   
   it "should create an account on the server" do      
-    config.should_receive(:run).with(/#{username}/, anything()).once
-    config.should_receive(:sudo).with(no_args()).once
+    config_mock.should_receive(:run).with(/#{username}/, anything()).once
+    config_mock.should_receive(:sudo).with(no_args()).once
     
     user.send(:create_account_on_server, server)
   end
@@ -46,12 +42,12 @@ describe CapistranoProvisioning::User do
     end
     
     it "should add a user to one group" do
-      user = CapistranoProvisioning::User.new(:name => username, :server => server, :config => config, :groups => 'test_group')
+      user = CapistranoProvisioning::User.new(:name => username, :server => server, :config => config_mock, :groups => 'test_group')
       user.groups.should include("test_group")
     end
     
     it "should add a user to an array of groups" do
-      user = CapistranoProvisioning::User.new(:name => username, :server => server, :config => config, :groups => ['test_group', 'test_group_2'])
+      user = CapistranoProvisioning::User.new(:name => username, :server => server, :config => config_mock, :groups => ['test_group', 'test_group_2'])
       user.groups.should include("test_group")
       user.groups.should include("test_group_2")
     end
