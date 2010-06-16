@@ -7,7 +7,7 @@ module CapistranoProvisioning
       # hence the untidy defaulting here.
       self.clusters ||= {}
       self.create_namespace_all_task
-      
+          
       cluster = CapistranoProvisioning::Cluster.new(name, :config => self)
 
       self.clusters[cluster.unique_name] = cluster

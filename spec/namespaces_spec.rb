@@ -102,17 +102,15 @@ describe Capistrano::Configuration do
     end
   end
   
-  
   it "should create a cluster" do
     namespace.cluster :test_cluster
-    namespace.clusters[:test_cluster].should be_a CapistranoProvisioning::Cluster
+    namespace.clusters["test_namespace:test_cluster"].should be_a CapistranoProvisioning::Cluster
   end
   
   it "cluster should take a list of servers inline" do
     namespace.cluster :test_cluster, 'server_1', 'server_2'
-    namespace.clusters[:test_cluster].servers.length.should == 2
+    namespace.clusters["test_namespace:test_cluster"].servers.length.should == 2
   end
-
 
   context "within a cluster" do
     it "should take a list of users"
