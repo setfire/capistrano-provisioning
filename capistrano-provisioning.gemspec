@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{capistrano-provisioning}
-  s.version = "0.0.1"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sam Phillips"]
-  s.date = %q{2010-06-15}
+  s.date = %q{2010-06-16}
   s.description = %q{Capistrano provisioning}
   s.email = %q{sam@samdanavia.com}
   s.extra_rdoc_files = [
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "lib/capistrano-provisioning/recipes.rb",
      "lib/capistrano-provisioning/user.rb",
      "pkg/capistrano-provisioning-0.0.0.gem",
+     "pkg/capistrano-provisioning-0.0.1.gem",
      "spec/cluster_spec.rb",
      "spec/namespaces_spec.rb",
      "spec/recipes_spec.rb",
