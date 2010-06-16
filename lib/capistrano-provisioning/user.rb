@@ -1,6 +1,7 @@
 module CapistranoProvisioning
   class User
-    attr_accessor :name, :config, :key, :groups
+    attr_accessor :name, :config, :key
+    attr_writer :groups
 
     def initialize(opts = {})
       self.name = opts[:name]
@@ -20,6 +21,10 @@ module CapistranoProvisioning
       self.create_ssh_config_directory(opts[:server])
       self.update_authorized_keys(opts[:server])
       self.add_account_to_groups(opts[:server])
+    end
+    
+    def groups
+      @groups.uniq
     end
     
     protected

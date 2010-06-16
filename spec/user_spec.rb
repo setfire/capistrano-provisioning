@@ -19,7 +19,7 @@ describe CapistranoProvisioning::User do
       expect { user.install(:server => server) }.to raise_error(SystemExit)
     end  
   end
-
+  
   it "should create an account on the server" do      
     config.should_receive(:run).with(/#{username}/, anything()).once
     config.should_receive(:sudo).with(no_args()).once
@@ -38,6 +38,11 @@ describe CapistranoProvisioning::User do
   describe "and groups" do
     it "should return an empty array if there are no groups" do
       user.groups.should == []
+    end
+    
+    it "should de-duplify groups" do
+      user.groups = ['test_group', 'test_group2', 'test_group']
+      user.groups.should == ['test_group','test_group2']
     end
     
     it "should add a user to one group" do
