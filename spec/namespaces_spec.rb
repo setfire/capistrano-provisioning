@@ -113,7 +113,64 @@ describe Capistrano::Configuration do
   end
 
   context "within a cluster" do
-    it "should take a list of users"
+    it "should take a list of users" do
+      config.namespace :test_namespace do
+        cluster :test_cluster do
+          users 'sam', 'chris'
+        end
+      end
+      
+      users = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users
+
+      ['sam', 'chris'].each do |user|
+        users.collect(&:name).should include(user)
+      end
+    end
+    
+    it "should inherit named users" do
+      config.namespace :test_namespace do
+        default_users :chaps, 'joe', 'bob'
+        cluster :test_cluster do
+          users :chaps
+        end
+      end
+      
+      users = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users
+
+      ['joe', 'bob'].each do |user|
+        users.collect(&:name).should include(user)
+      end
+
+      users.each do |user|
+        user.should be_a CapistranoProvisioning::User
+      end
+    end
+    
+    it "should raise an error if passed named users that do not exist" do
+      expect {
+        config.namespace :test_namespace do
+          default_users :chaps, 'joe', 'bob'
+          cluster :test_cluster do
+            users :non_existent_group
+          end
+        end
+      }.to raise_error
+    end
+    
+    it "should inherit named users mixed in with user names" do
+      config.namespace :test_namespace do
+        default_users :chaps, 'joe', 'bob'
+        cluster :test_cluster do
+          users :chaps, 'sam'
+        end
+      end
+      
+      users = config.namespaces[:test_namespace].clusters["test_namespace:test_cluster"].users
+
+      ['joe', 'bob', 'sam'].each do |user|
+        users.collect(&:name).should include(user)
+      end
+    end
     
     it "should not add users to the namespace" do
       pending()

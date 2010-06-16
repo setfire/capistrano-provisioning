@@ -46,8 +46,13 @@ module CapistranoProvisioning
         
     def add_users(users, opts = {})
       @users += users.collect do |user|
-        opts.merge!(:name => user, :config => self.config)
-        CapistranoProvisioning::User.new(opts)         # This dependency should be injected, really.
+        if user.is_a? CapistranoProvisioning::User
+          user.config = self.config
+          user
+        else
+          opts.merge!(:name => user, :config => self.config)
+          CapistranoProvisioning::User.new(opts)         # This dependency should be injected, really.
+        end
       end
     end
     
