@@ -137,7 +137,6 @@ Which will load all of the clusters defined in `system1`.
 
 It is also possible to define a default group of users for a namespace:
 
-
     namespace :system1 do
       default_users 'bob', 'joe', :groups => ['some_group']
       default_users 'rupert'
@@ -174,6 +173,40 @@ You can also pass an array of additional groups:
 
     namespace :nested_namespace do
       inherit_default_users :additional_groups => ['additional_group_1', 'additional_group_2']
+    end
+    
+#### Inheriting specific default users
+
+These groups of default users can also be named, so you can atomically specify inheritance:
+
+    namespace :system1 do
+      default_users 'bob', 'joe', :groups => ['some_group']
+      default_users 'rupert'
+      cluster :web do
+        # ...
+      end
+
+      cluster :db do
+        # ...
+      end
+    end
+
+Clusters can also inherit these named groups:
+
+    namespace :system1 do
+      default_users :admins, 'bob', 'joe'
+      cluster :web do
+        user :admins
+      end
+    end
+    
+These can be mixed in with normal user names:
+
+    namespace :system1 do
+      default_users :admins, 'bob', 'joe'
+      cluster :web do
+        user :admins, 'sam'
+      end
     end
 
 ## Features we guess we're probably going to need
