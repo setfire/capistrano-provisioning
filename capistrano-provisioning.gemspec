@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{capistrano-provisioning}
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sam Phillips"]
   s.date = %q{2010-06-16}
-  s.description = %q{Capistrano provisioning}
+  s.description = %q{Capistrano Provisioning is an extension to Capistrano that allows you to define clusters of servers and run provisioning tasks on them, such as installing users. It is a replacement for the fabric gem (http://rubygems.org/gems/fabric).}
   s.email = %q{sam@samdanavia.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
      "lib/capistrano-provisioning/user.rb",
      "pkg/capistrano-provisioning-0.0.0.gem",
      "pkg/capistrano-provisioning-0.0.1.gem",
+     "pkg/capistrano-provisioning-0.0.3.gem",
      "spec/cluster_spec.rb",
      "spec/namespaces_spec.rb",
      "spec/recipes_spec.rb",
@@ -37,11 +38,11 @@ Gem::Specification.new do |s|
      "spec/spec_helper.rb",
      "spec/user_spec.rb"
   ]
-  s.homepage = %q{http://github.com/samdanavia/capistrano-provisioning}
+  s.homepage = %q{http://github.com/setfire/capistrano-provisioning}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.6}
-  s.summary = %q{Capistrano provisioning}
+  s.summary = %q{Provision clusters of servers with Capistrano}
   s.test_files = [
     "spec/cluster_spec.rb",
      "spec/namespaces_spec.rb",

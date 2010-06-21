@@ -5,10 +5,10 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "capistrano-provisioning"
-    gem.summary = %Q{Capistrano provisioning}
-    gem.description = %Q{Capistrano provisioning}
+    gem.summary = %Q{Provision clusters of servers with Capistrano}
+    gem.description = %Q{Capistrano Provisioning is an extension to Capistrano that allows you to define clusters of servers and run provisioning tasks on them, such as installing users. It is a replacement for the fabric gem (http://rubygems.org/gems/fabric).}
     gem.email = "sam@samdanavia.com"
-    gem.homepage = "http://github.com/samdanavia/capistrano-provisioning"
+    gem.homepage = "http://github.com/setfire/capistrano-provisioning"
     gem.authors = ["Sam Phillips"]
     gem.add_dependency "capistrano", ">= 2.5.18"
     gem.add_development_dependency "rspec", ">= 1.2.9"
