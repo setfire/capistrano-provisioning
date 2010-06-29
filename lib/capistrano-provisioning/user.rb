@@ -13,12 +13,15 @@ module CapistranoProvisioning
       abort "Aborting - Cannot install user #{self.name} as no server specified" unless opts[:server]
       abort "Aborting - Could not find key for #{self.name} at #{local_key_file_path}" unless key
 
-      logger.debug "installing #{self.name} on #{opts[:server]}"    
+      self.server = opts[:server]
 
-      self.create_account_on_server(opts[:server]) unless self.account_exists?(opts[:server])
-      self.create_ssh_config_directory(opts[:server])
-      self.update_authorized_keys(opts[:server])
-      self.add_account_to_groups(opts[:server])
+      logger.debug "installing #{self.name} on #{self.server}"    
+
+      self.create_account_on_server unless self.account_exists?
+      self.create_ssh_config_directory
+      self.update_authorized_keys
+      self.set_ssh_config_permissions
+      self.add_account_to_groups
     end
     
     def groups
@@ -26,7 +29,9 @@ module CapistranoProvisioning
     end
     
     protected
-    def account_exists?(server)
+    attr_accessor :server
+
+    def account_exists?(server = self.server)
       begin
         if capture("id #{self.name}", :hosts => server)
           true
@@ -43,35 +48,36 @@ module CapistranoProvisioning
       File.read(local_key_file_path) if File.exists?(local_key_file_path) 
     end
 
-    def create_account_on_server(server)
+    def create_account_on_server(server = self.server)
       run "#{sudo} /usr/sbin/useradd -m #{name}", :pty => true, :hosts => server
     end
     
-    def add_account_to_groups(server)
+    def add_account_to_groups(server = self.server)
       self.groups.each do |group|
         run "#{sudo} /usr/sbin/usermod -a -G#{group} #{self.name}", :pty => true, :hosts => server
       end
     end
     
-    def create_ssh_config_directory(server)
+    def create_ssh_config_directory(server = self.server)
       # Actual dirt
       commands = <<-COMMANDS
         sudo su root -c 'if [ ! -d #{ssh_config_directory_path} ]; then
           sudo mkdir #{ssh_config_directory_path};
         fi';
-        #{sudo} chown #{name} #{ssh_config_directory_path} &&
-        #{sudo} chmod 700 #{ssh_config_directory_path}
       COMMANDS
       
       run commands, :pty => true, :hosts => server
     end
     
-    def update_authorized_keys(server)
-      commands = <<-COMMANDS
-        #{sudo} touch #{authorized_keys_file_path} &&
-        echo '#{key}' | sudo tee #{authorized_keys_file_path}
-      COMMANDS
-      run commands, :pty => true, :hosts => server
+    def update_authorized_keys(server = self.server)
+      tmp_location = "/tmp/#{self.name}.pub"
+      put key, tmp_location
+      run "#{sudo} mv #{tmp_location} #{authorized_keys_file_path}", :pty => true, :hosts => server
+    end
+    
+    def set_ssh_config_permissions(server = self.server)
+      run "#{sudo} chown -R #{name} #{ssh_config_directory_path}", :pty => true, :hosts => server
+      run "#{sudo} chmod -R 700 #{ssh_config_directory_path}", :pty => true, :hosts => server
     end
     
     def authorized_keys_file_path
@@ -94,6 +100,12 @@ module CapistranoProvisioning
     protected
     # This isn't the best way to get to the run/logger stuff in this class -
     # need to figure out a better way to do this, or a way to not need to.
+    
+
+
+    def put(data, path, options={})
+      self.config.put(data, path, options)
+    end
 
     def sudo(*parameters, &block)
       self.config.sudo(*parameters, &block)
