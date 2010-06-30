@@ -155,6 +155,12 @@ Which would mean that running:
 
 ... would add Bob, Joe and Rupert to the web cluster, with the appropriate groups.
 
+To only install specific users, specify them in a hosts variable:
+
+    cap system1:web install_users USERS='bob'
+
+This will only install bob - useful for if you're just adding one user and don't want to do a fullscale pass of all the keys. Note, though, that this user still needs to be defined within the recipe.
+
 #### Inheriting default users
 
 By default, namespaces do _not_ inherit default users from the namespace above. If you want this inheritance, it's easy:

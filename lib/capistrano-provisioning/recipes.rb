@@ -27,14 +27,19 @@ Capistrano::Configuration.instance(:must_exist).load do
   desc "Installs the specified users on the cluster"
   task :install_users do
     @clusters.each do |cluster|
-      cluster.install_users
+      cluster.install_users(user_list)
     end
   end
   
   task :preview_users do
     puts "The following users will be added: "
     @clusters.each do |cluster|
-      cluster.preview_users
+      cluster.preview_users(user_list)
     end
+  end
+  
+  def user_list
+    return [] if ENV["USERS"].nil?
+    ENV["USERS"].split(/, ?/)
   end
 end

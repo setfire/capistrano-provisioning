@@ -64,19 +64,32 @@ describe CapistranoProvisioning::Cluster do
       user_names.should include('bob', 'juan')
       user_names.should_not include('sam', 'david')
     end
+
+    context "installation" do
+      let(:test_user) { CapistranoProvisioning::User.new(:name => 'test_user') }
+      let(:test_user_2) { CapistranoProvisioning::User.new(:name => 'test_user_2') }
+
+      before(:each) do
+        test_user.stub!(:key => 'test key')
+        test_user_2.stub!(:key => 'test key 2')
+
+        cluster.servers = 'host1.example.com'
+        cluster.add_users [test_user, test_user_2]
+      end
   
-    it "should install users" do
-      test_user, test_user_2 = user.dup, user.dup
-      
-      test_user.stub!(:key => 'test key')
-      test_user.should_receive(:install)
-      
-      test_user_2.stub!(:key => 'test key 2')
-      test_user_2.should_receive(:install)
-      
-      cluster.servers = 'host1.example.com'
-      cluster.add_users [test_user, test_user_2]
-      cluster.install_users
+      it "should install all users when no specific users are passed" do
+        test_user.should_receive(:install)      
+        test_user_2.should_receive(:install)  
+
+        cluster.install_users
+      end
+    
+      it "should install only specified users when specific users are passed" do
+        test_user.should_receive(:install)      
+        test_user_2.should_not_receive(:install)  
+
+        cluster.install_users('test_user')
+      end
     end
   end
 end

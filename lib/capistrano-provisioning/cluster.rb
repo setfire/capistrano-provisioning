@@ -13,22 +13,24 @@ module CapistranoProvisioning
       add_cluster_cap_task
     end
     
-    def install_users
-      ensure_users      
-
+    def install_users(specified_users = [])
+      ensure_users
+      
       self.servers.each do |server|
         self.users.each do |user|
+          next unless specified_users.empty? or specified_users.include?(user.name)
           user.install(:server => server)
         end
       end
     end
     
-    def preview_users
+    def preview_users(specified_users = [])
       ensure_users
 
       self.servers.each do |server|
         puts "#{server}: "
         self.users.each do |user|
+          next unless specified_users.empty? or specified_users.include?(user.name)
           groups = user.groups.empty? ? '' : "(#{user.groups.join(', ')})"
           puts "\t#{user.name} #{groups}"
         end
