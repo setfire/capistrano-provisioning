@@ -71,7 +71,7 @@ module CapistranoProvisioning
     
     def update_authorized_keys(server = self.server)
       tmp_location = "/tmp/#{self.name}.pub"
-      put key, tmp_location
+      put key, tmp_location, :hosts => server
       run "#{sudo} mv #{tmp_location} #{authorized_keys_file_path}", :pty => true, :hosts => server
     end
     
